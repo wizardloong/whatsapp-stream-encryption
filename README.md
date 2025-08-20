@@ -1,7 +1,7 @@
 # WhatsApp Media Encryption/Decryption PHP Library
 
 ## Overview
-This library provides tools for encrypting and decrypting WhatsApp media files (images, audio, video) using the official WhatsApp algorithm. It supports streaming encryption/decryption, MAC validation, and sidecar generation for video integrity.
+This PHP library provides tools for encrypting and decrypting WhatsApp media files (images, audio, video) using the official WhatsApp algorithm. It supports streaming encryption/decryption, MAC validation, and sidecar generation for video integrity.
 
 - **Encryption**: AES-256-ECB with CBC-like chaining and PKCS#7 padding.
 - **Decryption**: Validates MAC, removes padding, and restores original media.
