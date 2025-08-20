@@ -28,46 +28,70 @@ composer install
 
 ## Usage
 
+First, install the package via Composer in your project:
+
+```bash
+composer require wizardloong/whatsapp-stream-encryption
+```
+
+Then use it in your code:
+
 ### Encrypting Media
 ```php
+require 'vendor/autoload.php';
+
 use Wizardloong\WhatsAppStreamEncryption\WhatsAppEncryptingStream;
 use Wizardloong\WhatsAppStreamEncryption\MediaType;
 use GuzzleHttp\Psr7\Utils;
 
 $mediaKey = random_bytes(32); // Or use WhatsApp-provided key
-$stream = Utils::streamFor(fopen('input.jpg', 'rb'));
-$encrypting = new WhatsAppEncryptingStream($stream, $mediaKey, MediaType::IMAGE);
+$inputStream = Utils::streamFor(fopen('input.jpg', 'rb'));
+$encrypting = new WhatsAppEncryptingStream($inputStream, $mediaKey, MediaType::IMAGE);
 
-$output = '';
+$outputStream = fopen('output.encrypted', 'wb');
 while (!$encrypting->eof()) {
-	$output .= $encrypting->read(8192);
+	fwrite($outputStream, $encrypting->read(8192));
 }
-file_put_contents('output.encrypted', $output);
+fclose($outputStream);
 ```
 
 ### Decrypting Media
 ```php
+require 'vendor/autoload.php';
+
 use Wizardloong\WhatsAppStreamEncryption\WhatsAppDecryptingStream;
 use Wizardloong\WhatsAppStreamEncryption\MediaType;
 use GuzzleHttp\Psr7\Utils;
 
 $mediaKey = file_get_contents('IMAGE.key');
-$stream = Utils::streamFor(fopen('output.encrypted', 'rb'));
-$decrypting = new WhatsAppDecryptingStream($stream, $mediaKey, MediaType::IMAGE);
+$encryptedStream = Utils::streamFor(fopen('output.encrypted', 'rb'));
+$decrypting = new WhatsAppDecryptingStream($encryptedStream, $mediaKey, MediaType::IMAGE);
 
-$decrypted = '';
+$outputStream = fopen('output.decrypted.jpg', 'wb');
 while (!$decrypting->eof()) {
-	$decrypted .= $decrypting->read(8192);
+	fwrite($outputStream, $decrypting->read(8192));
 }
-file_put_contents('output.decrypted.jpg', $decrypted);
+fclose($outputStream);
 ```
 
 ### Video Sidecar Generation
 ```php
-$encrypting = new WhatsAppEncryptingStream($stream, $mediaKey, MediaType::VIDEO, true);
+require 'vendor/autoload.php';
+
+use Wizardloong\WhatsAppStreamEncryption\WhatsAppEncryptingStream;
+use Wizardloong\WhatsAppStreamEncryption\MediaType;
+use GuzzleHttp\Psr7\Utils;
+
+$mediaKey = file_get_contents('VIDEO.key');
+$inputStream = Utils::streamFor(fopen('input.mp4', 'rb'));
+$encrypting = new WhatsAppEncryptingStream($inputStream, $mediaKey, MediaType::VIDEO, true);
+
+$outputStream = fopen('output.encrypted', 'wb');
 while (!$encrypting->eof()) {
-	$ciphertext .= $encrypting->read(16384);
+	fwrite($outputStream, $encrypting->read(16384));
 }
+fclose($outputStream);
+
 $sidecar = $encrypting->getSidecar();
 file_put_contents('output.sidecar', $sidecar);
 ```
