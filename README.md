@@ -46,7 +46,7 @@ use GuzzleHttp\Psr7\Utils;
 
 $mediaKey = random_bytes(32); // Or use WhatsApp-provided key
 $inputStream = Utils::streamFor(fopen('input.jpg', 'rb'));
-$encrypting = new WhatsAppEncryptingStream($inputStream, $mediaKey, MediaType::IMAGE);
+$encrypting = new WhatsAppEncryptingStream($inputStream, MediaType::IMAGE, $mediaKey);
 
 $outputStream = fopen('output.encrypted', 'wb');
 while (!$encrypting->eof()) {
@@ -65,7 +65,7 @@ use GuzzleHttp\Psr7\Utils;
 
 $mediaKey = file_get_contents('IMAGE.key');
 $encryptedStream = Utils::streamFor(fopen('output.encrypted', 'rb'));
-$decrypting = new WhatsAppDecryptingStream($encryptedStream, $mediaKey, MediaType::IMAGE);
+$decrypting = new WhatsAppDecryptingStream($encryptedStream, MediaType::IMAGE, mediaKey);
 
 $outputStream = fopen('output.decrypted.jpg', 'wb');
 while (!$decrypting->eof()) {
