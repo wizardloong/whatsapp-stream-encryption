@@ -84,7 +84,7 @@ use GuzzleHttp\Psr7\Utils;
 
 $mediaKey = file_get_contents('VIDEO.key');
 $inputStream = Utils::streamFor(fopen('input.mp4', 'rb'));
-$encrypting = new WhatsAppEncryptingStream($inputStream, $mediaKey, MediaType::VIDEO, true);
+$encrypting = new WhatsAppEncryptingStream($inputStream, MediaType::VIDEO, $mediaKey, true);
 
 $outputStream = fopen('output.encrypted', 'wb');
 while (!$encrypting->eof()) {
